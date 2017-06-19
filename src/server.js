@@ -11,7 +11,7 @@ const server = restify.createServer({
 
 server.get('/status', statusHandler.statusGetHandler)
 
-server.on('after', (req, res, route, err) => {
+server.on('after', (req, res) => {
   server.log.info({
     status: res.statusCode,
     method: req.method,
