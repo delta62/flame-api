@@ -2,6 +2,7 @@ const pkg            = require('../package.json')
 const restify        = require('restify')
 const statusHandler  = require('./handlers/status')
 const bunyan         = require('bunyan')
+const middleware     = require('./middleware/timer')
 
 const logger = bunyan.createLogger({ name: pkg.name })
 const server = restify.createServer({
@@ -9,13 +10,17 @@ const server = restify.createServer({
   log:  logger
 })
 
+server.use(middleware.reqStartTimer)
+
 server.get('/status', statusHandler.statusGetHandler)
 
 server.on('after', (req, res) => {
+  middleware.reqEndTimer(req)
   server.log.info({
-    status: res.statusCode,
-    method: req.method,
-    path:   req.path()
+    status:  res.statusCode,
+    method:  req.method,
+    path:    req.path(),
+    resTime: req.time
   }, 'after')
 })
 
