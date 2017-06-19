@@ -4,6 +4,8 @@ node_js:
   - 4
   - 6
   - 8
+install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 addons:
   apt:
     sources:
