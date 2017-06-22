@@ -1,21 +1,33 @@
-const pkg            = require('../package.json')
-const restify        = require('restify')
-const statusHandler  = require('./handlers/status')
-const bunyan         = require('bunyan')
-const middleware     = require('./middleware/timer')
+const pkg                            = require('../package.json')
+const config                         = require('config')
+const { createServer, bodyParser }   = require('restify')
+const { createLogger }               = require('bunyan')
+const { reqStartTimer, reqEndTimer } = require('./middleware/timer')
+const { timestampFactory }           = require('./timestamp')
+const { Lock }                       = require('./repositories/lock')
+const { statusGetHandler }           = require('./handlers/status')
+const {
+  lockGetHandler,
+  lockPostHandler
+} = require('./handlers/lock')
 
-const logger = bunyan.createLogger({ name: pkg.name })
-const server = restify.createServer({
+const logger = createLogger({ name: pkg.name })
+const server = createServer({
   name: pkg.name,
   log:  logger
 })
 
-server.use(middleware.reqStartTimer)
+server.lock = new Lock(config.get('lockTimeout') * 1000, timestampFactory)
 
-server.get('/status', statusHandler.statusGetHandler)
+server.use(bodyParser({ mapParams: false }))
+server.use(reqStartTimer)
+
+server.get('/status',       statusGetHandler)
+server.get('/burner/lock',  lockGetHandler)
+server.post('/burner/lock', lockPostHandler)
 
 server.on('after', (req, res) => {
-  middleware.reqEndTimer(req)
+  reqEndTimer(req)
   server.log.info({
     status:  res.statusCode,
     method:  req.method,
