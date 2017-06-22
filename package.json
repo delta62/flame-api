@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "pretest": "eslint src/ test/ index.js",
-    "test": "mocha test/**/*-tests.js",
-    "debug": "nodemon -x 'npm start'"
+    "test": "mocha test/*-tests.js test/**/*-tests.js",
+    "debug": "nodemon -x 'npm test && npm start'"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   "dependencies": {
     "bunyan": "^1.8.10",
     "config": "^1.26.1",
+    "joi": "^10.6.0",
     "restify": "^4.3.0",
     "rpi-gpio": "^0.8.1"
   },
