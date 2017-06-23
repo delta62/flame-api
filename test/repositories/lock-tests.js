@@ -96,11 +96,11 @@ describe('lock repository', () => {
       expect(() => lock.unlock('bar')).to.throw(ConflictError)
     })
   })
-
-  function timeline() {
-    let t = 0
-    const f = () => t
-    f.advance = dt => t += dt
-    return f
-  }
 })
+
+function timeline() {
+  let t = 0
+  const f = () => t
+  f.advance = dt => t += dt
+  return f
+}
