@@ -13,7 +13,7 @@ function mkServer({ name, logger, lock, channels }) {
     log: logger
   })
 
-  Object.assign(server, lock, channels)
+  Object.assign(server, { lock, channels })
 
   server.use(bodyParser({ mapParams: false }))
   server.use(reqStartTimer)
