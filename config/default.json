@@ -1,4 +1,10 @@
 {
   "port": "8080",
-  "lockTimeout": 30
+  "lockTimeout": 30,
+  "channelTimeout": 7,
+  "channels": [
+    8,
+    7,
+    1
+  ]
 }
