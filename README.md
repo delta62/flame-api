@@ -2,3 +2,6 @@
 
 # flame-api
 Simple HTTP API for flamethrowers
+
+- [Configuration Options](https://github.com/delta62/flame-api/wiki/Configuration-Options)
+- [API Documentation](https://github.com/delta62/flame-api/wiki/API-Actions)
