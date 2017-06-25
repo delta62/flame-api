@@ -26,14 +26,22 @@ function mkServer({ name, logger, lock, channels }) {
   server.post('/burner/lock',             lockPostHandler)
   server.post('/burner/channel/:channel', channelPostHandler)
 
-  server.on('after', (req, res) => {
+  server.on('after', (req, res, route, err) => {
     reqEndTimer(req)
-    server.log.info({
+    const logData = {
       status:  res.statusCode,
       method:  req.method,
       path:    req.path(),
-      resTime: req.time
-    }, 'after')
+      resTime: req.reqTime
+    }
+
+    let logLevel = 'info'
+    if (err && err instanceof Error) {
+      logLevel = 'error'
+      logData.err = err
+    }
+
+    server.log[logLevel](logData, 'end')
   })
 
   server.on('uncaughtException', (req, res, route, err) => {
