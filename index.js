@@ -1,7 +1,7 @@
 const pkg                  = require('./package.json')
 const config               = require('config')
 const gpio                 = require('rpi-gpio')
-const { createLogger }     = require('bunyan')
+const { logger }           = require('./src/log')
 const { mkServer }         = require('./src/server')
 const { Lock }             = require('./src/repositories/lock')
 const { timestampFactory } = require('./src/timestamp')
@@ -13,8 +13,7 @@ const {
 
 const name     = pkg.name
 const port     = config.get('port')
-const timeout  = config.get('channelTimeout')
-const logger   = createLogger({ name })
+const timeout  = config.get('channelTimeout') * 1000
 const lock     = new Lock(config.get('lockTimeout') * 1000, timestampFactory)
 const channels = initChannels(gpio, config.get('channels'), timestampFactory)
 const server   = mkServer({ name, logger, lock, channels })

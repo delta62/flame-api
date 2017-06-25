@@ -1,3 +1,5 @@
+require('../promise')
+
 function Channel(pin, gpio, timestampFactory) {
   this.pin = pin
   this.gpio = gpio
@@ -40,7 +42,8 @@ Channel.prototype.deactivate = function() {
 Channel.prototype._init = function() {
   if (this.initPromise) return this.initPromise
 
-  this.initPromise = Promise.fromNodeCallback(this.gpio.setup, this.pin)
+  const cb = this.gpio.setup.bind(this.gpio)
+  this.initPromise = Promise.fromNodeCallback(cb, this.pin)
   return this.initPromise
 }
 
