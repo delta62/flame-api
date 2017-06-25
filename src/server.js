@@ -1,7 +1,8 @@
-const { createServer, bodyParser }   = require('restify')
-const { reqStartTimer, reqEndTimer } = require('./middleware/timer')
-const { statusGetHandler }           = require('./handlers/status')
-const { channelPostHandler }         = require('./handlers/channel')
+const { createServer, bodyParser, CORS } = require('restify')
+const { reqStartTimer, reqEndTimer }     = require('./middleware/timer')
+const { requireJson }                    = require('./middleware/require-json')
+const { statusGetHandler }               = require('./handlers/status')
+const { channelPostHandler }             = require('./handlers/channel')
 const {
   lockGetHandler,
   lockPostHandler
@@ -15,6 +16,8 @@ function mkServer({ name, logger, lock, channels }) {
 
   Object.assign(server, { lock, channels })
 
+  server.use(CORS())
+  server.use(requireJson)
   server.use(bodyParser({ mapParams: false }))
   server.use(reqStartTimer)
 
