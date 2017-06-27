@@ -41,7 +41,17 @@ describe('channel service', () => {
     let channels
 
     beforeEach(() => {
-      channels = initChannels(gpio, [ 1, 2, 3 ], time)
+      channels = {
+        channels: [
+          {
+            channel: {
+              activate: () => Promise.resolve(),
+              deactivate: () => Promise.resolve()
+            },
+            number: 0
+          }
+        ]
+      }
     })
 
     it('should return a promise', () => {

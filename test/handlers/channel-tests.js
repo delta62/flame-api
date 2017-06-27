@@ -28,7 +28,7 @@ describe('channel handlers', () => {
 
     it('should reset the lock timeout', done => {
       const server = initServer({ isLocked: true })
-      const lockSpy = spy(server.lock, 'acquire')
+      const lockSpy = spy(server.lock, 'lock')
       const body = { state: true, lockId: 'a' }
       const cb = () => {
         expect(lockSpy.calledOnce).to.equal(true)
@@ -75,8 +75,7 @@ function initServer({ isLocked }, boom) {
       lock: () => {
         if (boom) throw new ConflictError()
       },
-      isLockedBy: () => !boom,
-      acquire: () => Promise.resolve()
+      isLockedBy: () => !boom
     },
     channels: {
       channels: [ {

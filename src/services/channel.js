@@ -1,5 +1,6 @@
 const { NotFoundError } = require('restify')
 const { Channel }       = require('../repositories/channel')
+const { logger }        = require('../log')
 
 function initChannels(gpio, channels, timestampFactory) {
   const cs = channels.map((pin, idx) => ({
@@ -13,16 +14,28 @@ function initChannels(gpio, channels, timestampFactory) {
 }
 
 function setChannel(channels, channelNumber, state) {
-  const c = channels.channels.find(({ number }) => number === channelNumber)
+  const c = channels.channels.find(({ number }) => number == channelNumber)
   const channel = c ? c.channel : null
   if (!channel) return Promise.reject(new NotFoundError())
-  return state ? channel.activate() : channel.deactivate()
+  if (state) {
+    logger.info(`Activating channel ${channelNumber} (pin ${channel.pin})`)
+    return channel.activate()
+  } else {
+    logger.info(`Deactivating channel ${channelNumber} (pin ${channel.pin})`)
+    return channel.deactivate()
+  }
 }
 
 function resetChannels(channels, timeout) {
   channels.channels
     .filter(c => c.channel.getUptime() > timeout)
-    .forEach(c => c.channel.deactivate())
+    .forEach(c => {
+      const num = c.number
+      const pin = c.channel.pin
+      const uptime = c.channel.getUptime()
+      logger.warn(`Channel ${num} (pin ${pin}) up for ${uptime}; turning off`)
+      c.channel.deactivate()
+    })
 }
 
 function destroyChannels(channels) {
