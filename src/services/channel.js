@@ -19,12 +19,11 @@ function setChannel(channels, channelNumber, state) {
   if (!channel) return Promise.reject(new NotFoundError())
   if (state) {
     logger.info(`Activating channel ${channelNumber} (pin ${channel.pin})`)
-    channel.activate()
+    return channel.activate()
   } else {
     logger.info(`Deactivating channel ${channelNumber} (pin ${channel.pin})`)
-    channel.deactivate()
+    return channel.deactivate()
   }
-  return state ? channel.activate() : channel.deactivate()
 }
 
 function resetChannels(channels, timeout) {
