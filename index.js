@@ -34,7 +34,17 @@ server.listen(port, () => {
 
 setInterval(() => resetChannels(channels, timeout), 1000)
 
-process.on('exit', () => {
-  logger.warn('Shutting down')
-  destroyChannels()
-})
+process.stdin.resume()
+process.on('SIGINT', exitHandler.bind(null, { exit: true }))
+process.on('uncaughtException', exitHandler.bind(null, { exit: true }))
+process.on('exit', exitHandler.bind(null, { cleanup: true }))
+
+function exitHandler({ clean, exit }, err) {
+  if (exit) {
+    if (err) logger.error(err, 'Shutting down')
+    else logger.warn('Shutting down')
+  }
+
+  if (clean) destroyChannels()
+  if (exit) process.exit(err ? 1 : 0)
+}
