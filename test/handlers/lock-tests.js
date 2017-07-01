@@ -1,5 +1,6 @@
 const { describe, it } = require('mocha')
 const { expect }       = require('code')
+const { spy }          = require('sinon')
 const {
   BadRequestError,
   ConflictError
@@ -57,6 +58,16 @@ describe('lock handler', () => {
       const cb = expectError(ConflictError, done)
       lockPostHandler.call(server, req(body), res(), cb)
     })
+
+    it('should deactivate channels when unlocking', done => {
+      const server = initServer({ isLocked: true })
+      const body = { state: 'UNLOCKED', lockId: 'a' }
+      const channelDeactivateSpy = spy(server.channels.channels[0].channel, 'deactivate')
+      lockPostHandler.call(server, req(body), res(), () => {
+        expect(channelDeactivateSpy.calledOnce).to.be.true()
+        done()
+      })
+    })
   })
 })
 
@@ -79,6 +90,17 @@ function initServer({ isLocked }, boom) {
         if (boom) throw new ConflictError()
       }
     },
+    channels: {
+      channels: [
+        {
+          channel: {
+            getUptime: () => 12,
+            isActive: () => true,
+            deactivate: () => Promise.resolve()
+          }
+        }
+      ]
+    }
   }
   return server(props)
 }

@@ -7,7 +7,7 @@
     "start": "node index.js",
     "pretest": "eslint src/ test/ index.js",
     "test": "mocha test/*-tests.js test/**/*-tests.js",
-    "debug": "nodemon -x 'npm test && npm start'"
+    "debug": "nodemon -x 'npm test'"
   },
   "repository": {
     "type": "git",
