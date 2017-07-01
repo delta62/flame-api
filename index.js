@@ -11,12 +11,12 @@ const {
   destroyChannels
 }                          = require('./src/services/channel')
 
-const name     = pkg.name
-const port     = config.get('port')
-const timeout  = config.get('channelTimeout') * 1000
-const lock     = new Lock(config.get('lockTimeout') * 1000, timestampFactory)
-const channels = initChannels(gpio, config.get('channels'), timestampFactory)
-const server   = mkServer({ name, logger, lock, channels })
+const name      = pkg.name
+const port      = config.get('port')
+const timeout   = config.get('channelTimeout') * 1000
+const lock      = new Lock(config.get('lockTimeout') * 1000, timestampFactory)
+const channels  = initChannels(gpio, config.get('channels'), timestampFactory)
+const server    = mkServer({ name, logger, lock, channels })
 
 Object.keys(server.router.routes).map(key => {
   server.router.routes[key].forEach(route => {
