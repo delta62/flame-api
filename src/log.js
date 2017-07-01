@@ -3,7 +3,7 @@ const config           = require('config')
 const { createLogger } = require('bunyan')
 
 const streams = [{
-  stream: process.stderr
+  stream: process.stdout
 }]
 
 if (config.has('logPath')) {
