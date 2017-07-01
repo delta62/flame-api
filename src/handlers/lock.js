@@ -1,4 +1,6 @@
-const lockValidator = require('../validators/lock')
+const config            = require('config')
+const { validate }      = require('../validators/lock')
+const { resetChannels } = require('../services/channel')
 
 function lockGetHandler(req, res, next) {
   Promise.resolve(this.lock.isLocked() ? 'LOCKED' : 'UNLOCKED')
@@ -9,12 +11,18 @@ function lockGetHandler(req, res, next) {
 }
 
 function lockPostHandler(req, res, next) {
-  lockValidator.validate(req.body)
+  validate(req.body)
     .then(({ state, lockId }) => {
-      if (state === 'LOCKED') this.lock.lock(lockId)
-      else this.lock.unlock(lockId)
+      if (state === 'LOCKED') {
+        this.lock.lock(lockId)
+      } else {
+        resetChannels(this.channels, 0)
+        this.lock.unlock(lockId)
+      }
     })
-    .then(() => res.send(200))
+    .then(() => res.json({
+      timeout: config.get('lockTimeout')
+    }))
     .then(next)
     .catch(next)
 }

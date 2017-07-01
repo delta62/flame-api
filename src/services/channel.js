@@ -3,10 +3,14 @@ const { Channel }       = require('../repositories/channel')
 const { logger }        = require('../log')
 
 function initChannels(gpio, channels, timestampFactory) {
-  const cs = channels.map((pin, idx) => ({
-    channel: new Channel(pin, gpio, timestampFactory),
-    number:  idx
-  }))
+  const cs = channels.map((pin, idx) => {
+    logger.info(`Channel ${idx} -> pin ${pin}`)
+    return {
+      channel: new Channel(pin, gpio, timestampFactory),
+      number:  idx
+    }
+  })
+
   return {
     channels: cs,
     gpio
