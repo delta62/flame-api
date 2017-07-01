@@ -1,14 +1,19 @@
-const { createServer, bodyParser, CORS } = require('restify')
-const { reqStartTimer, reqEndTimer }     = require('./middleware/timer')
-const { requireJson }                    = require('./middleware/require-json')
-const { statusGetHandler }               = require('./handlers/status')
-const { channelPostHandler }             = require('./handlers/channel')
+const {
+  createServer,
+  bodyParser,
+  CORS,
+  serveStatic
+}                                    = require('restify')
+const { reqStartTimer, reqEndTimer } = require('./middleware/timer')
+const { requireJson }                = require('./middleware/require-json')
+const { statusGetHandler }           = require('./handlers/status')
+const { channelPostHandler }         = require('./handlers/channel')
 const {
   lockGetHandler,
   lockPostHandler
-} = require('./handlers/lock')
+}                                    = require('./handlers/lock')
 
-function mkServer({ name, logger, lock, channels }) {
+function mkServer({ name, logger, lock, channels, staticDir }) {
   const server = createServer({
     name,
     log: logger
@@ -20,6 +25,16 @@ function mkServer({ name, logger, lock, channels }) {
   server.use(requireJson)
   server.use(bodyParser({ mapParams: false }))
   server.use(reqStartTimer)
+
+  server.get('/', (req, res, next) => {
+    res.header('Location', '/static')
+    res.send(301)
+    next()
+  })
+  server.get(/^\/static/, serveStatic({
+    directory: process.cwd(),
+    default: 'index.html'
+  }))
 
   server.get('/status',                   statusGetHandler)
   server.get('/burner/lock',              lockGetHandler)
