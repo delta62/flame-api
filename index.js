@@ -35,6 +35,6 @@ server.listen(port, () => {
 setInterval(() => resetChannels(channels, timeout), 1000)
 
 process.on('exit', () => {
-  logger.info('Shutting down')
+  logger.warn('Shutting down')
   destroyChannels()
 })
