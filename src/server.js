@@ -13,7 +13,7 @@ const {
   lockPostHandler
 }                                    = require('./handlers/lock')
 
-function mkServer({ name, logger, lock, channels, staticDir }) {
+function mkServer({ name, logger, lock, channels }) {
   const server = createServer({
     name,
     log: logger
