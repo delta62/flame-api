@@ -1,3 +1,4 @@
+const config            = require('config')
 const { validate }      = require('../validators/lock')
 const { resetChannels } = require('../services/channel')
 
@@ -19,7 +20,9 @@ function lockPostHandler(req, res, next) {
         this.lock.unlock(lockId)
       }
     })
-    .then(() => res.send(200))
+    .then(() => res.json({
+      timeout: config.get('lockTimeout')
+    }))
     .then(next)
     .catch(next)
 }

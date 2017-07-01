@@ -45,6 +45,13 @@ describe('lock handler', () => {
       lockPostHandler.call(server, req(body), res(verifier), done)
     })
 
+    it('should include the idle timeout of the lock', done => {
+      const server = initServer({ isLocked: false })
+      const body = { state: 'LOCKED', lockId: 'a' }
+      const verifier = data => expect(data.timeout).to.be.a.number()
+      lockPostHandler.call(server, req(body), resJSON(verifier), done)
+    })
+
     it('should return 400 when bad input is sent', done => {
       const server = initServer({ isLocked: true })
       const body = { state: 'FOO', lockId: [ 'bar' ] }
